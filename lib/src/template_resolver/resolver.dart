@@ -6,13 +6,11 @@ import 'package:mustache_template/mustache.dart';
 import 'package:path/path.dart' as p;
 
 final class TemplateResolver {
-  final String output;
   final String template;
 
   final Map<String, dynamic> context;
 
   const TemplateResolver({
-    required this.output,
     required this.template,
     required this.context,
   });

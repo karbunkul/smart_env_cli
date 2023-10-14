@@ -1,18 +1,25 @@
 part of 'config.dart';
 
 extension ConfigGenerator on Config {
-  void generate() {
+  void generate({String? workDir}) {
     var env = DotEnv(includePlatformEnvironment: true)..load();
 
     final context = _variables(env);
 
     for (final fileTemplate in templates) {
       final resolver = TemplateResolver(
-        output: fileTemplate.output,
         template: fileTemplate.template,
         context: context,
       );
-      print(resolver.apply());
+
+      final renderedTemplate = resolver.apply(workDir: workDir);
+      final outputFile = File(p.normalize(
+        p.join(workDir ?? '', fileTemplate.output),
+      ));
+
+      outputFile
+        ..createSync(recursive: true)
+        ..writeAsStringSync(renderedTemplate);
     }
   }
 

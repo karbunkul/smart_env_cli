@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:dotenv/dotenv.dart';
 import 'package:json_schema/json_schema.dart';
 import 'package:meta/meta.dart';
+import 'package:path/path.dart' as p;
 
 import '../template_resolver/resolver.dart';
 
