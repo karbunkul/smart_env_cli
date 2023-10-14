@@ -19,8 +19,8 @@ void main() {
     ),
   ];
 
-  final templates = <Template>[
-    Template(output: 'lib', template: 'config.dart'),
+  final templates = <FileTemplate>[
+    FileTemplate(output: 'lib/config.dart', template: 'config.tpl'),
   ];
 
   final config = Config(
@@ -28,5 +28,15 @@ void main() {
     templates: templates,
   );
 
-  print(config.export());
+  final fileTemplate = config.templates.first;
+  final resolver = TemplateResolver(
+      output: fileTemplate.output,
+      template: fileTemplate.template,
+      context: {
+        'port': 80,
+        'base_auth': 'very-secret',
+        'debug_mode': false,
+      });
+
+  print(resolver.apply());
 }

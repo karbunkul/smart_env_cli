@@ -1,11 +1,11 @@
 part of 'config.dart';
 
 @immutable
-final class Template {
+final class FileTemplate {
   final String output;
   final String template;
 
-  const Template({required this.output, required this.template});
+  const FileTemplate({required this.output, required this.template});
 
   Map<String, dynamic> export() {
     return {

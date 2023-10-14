@@ -2,14 +2,14 @@ import 'package:meta/meta.dart';
 
 part 'cast_constraint.dart';
 part 'cast_type.dart';
-part 'template.dart';
+part 'file_template.dart';
 part 'variable.dart';
 
 @immutable
 final class Config {
   final List<Variable> variables;
   final String? baseDir;
-  final List<Template> templates;
+  final List<FileTemplate> templates;
 
   Config({
     required this.variables,
