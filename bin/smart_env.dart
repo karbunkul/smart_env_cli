@@ -7,16 +7,11 @@ void main() {
       castTo: CastType.int,
       constraint: CastConstraint(
         name: 'port',
-        constraints: [
-          {'minimum': 80},
-          {'maximum': 300},
-        ],
+        constraints: {'minimum': 80, 'maximum': 300},
       ),
     ),
-    Variable(
-      name: 'debug_mode',
-      castTo: CastType.boolean,
-    ),
+    Variable(name: 'debug_mode', castTo: CastType.boolean),
+    Variable(name: 'base_auth'),
   ];
 
   final templates = <FileTemplate>[
@@ -28,15 +23,5 @@ void main() {
     templates: templates,
   );
 
-  final fileTemplate = config.templates.first;
-  final resolver = TemplateResolver(
-      output: fileTemplate.output,
-      template: fileTemplate.template,
-      context: {
-        'port': 80,
-        'base_auth': 'very-secret',
-        'debug_mode': false,
-      });
-
-  print(resolver.apply());
+  config.generate();
 }

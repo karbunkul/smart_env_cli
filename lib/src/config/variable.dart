@@ -12,6 +12,8 @@ final class Variable {
     this.constraint,
   });
 
+  bool get hasConstraint => constraint != null;
+
   Map<String, dynamic> export() {
     final json = <String, dynamic>{
       'name': name.toUpperCase(),

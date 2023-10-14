@@ -1,8 +1,14 @@
+import 'package:dotenv/dotenv.dart';
+import 'package:json_schema/json_schema.dart';
 import 'package:meta/meta.dart';
+
+import '../template_resolver/resolver.dart';
 
 part 'cast_constraint.dart';
 part 'cast_type.dart';
+part 'exporter.dart';
 part 'file_template.dart';
+part 'generator.dart';
 part 'variable.dart';
 
 @immutable
@@ -18,33 +24,4 @@ final class Config {
   });
 
   double get version => 1.0;
-
-  Map<String, dynamic> export() {
-    final constraints = <Map<String, dynamic>>[];
-
-    final json = <String, dynamic>{
-      'version': version,
-      'variables': variables.map((e) {
-        if (e.constraint != null) {
-          constraints.add(e.constraint!.export());
-        }
-
-        return e.export();
-      }).toList(growable: false),
-      'templates': templates.map((e) => e.export()).toList(growable: false),
-    };
-
-    if (baseDir != null) {
-      json.putIfAbsent('baseDir', () => baseDir);
-    }
-
-    if (constraints.isNotEmpty) {
-      json.putIfAbsent(
-        'constraints',
-        () => constraints.toList(growable: false),
-      );
-    }
-
-    return json;
-  }
 }
