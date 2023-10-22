@@ -110,7 +110,7 @@ class RunCommand {
 
           return castedValue;
         }
-        return raw;
+        return castedValue;
       });
     }
 

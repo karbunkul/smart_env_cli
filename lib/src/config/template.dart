@@ -66,14 +66,13 @@ final class JsonTemplate extends BaseTemplate {
     required Map<String, dynamic> vars,
     required String workDir,
   }) {
-    final json = <String>[];
+    final json = <String, dynamic>{};
     for (final field in fields) {
       final key = field.toLowerCase();
-      final raw = vars[key];
-      final value = raw is String ? "$raw" : raw;
-      json.add('"$key": $value');
+      json.putIfAbsent(key, () => vars[key]);
     }
 
-    return '{\n  ${json.join(', \n  ')}\n}';
+    final encoder = JsonEncoder.withIndent('  ');
+    return encoder.convert(json);
   }
 }

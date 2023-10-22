@@ -4,8 +4,6 @@ version: 1
 variables:
   - name: PORT
     castTo: int
-    virtual:
-      exec: pwd
 
   - name: DEBUG_MODE
     castTo: boolean
@@ -27,3 +25,4 @@ templates:
       fields:
         - PORT
         - DEBUG_MODE
+        - GIT_BRANCH
