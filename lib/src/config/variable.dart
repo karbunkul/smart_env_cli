@@ -6,47 +6,60 @@ final class Variable {
   final CastType castTo;
   final CastConstraint? constraint;
   final String? summary;
+  final Virtual? virtual;
 
   const Variable({
     required this.name,
     this.castTo = CastType.string,
     this.constraint,
     this.summary,
+    this.virtual,
   });
 
   bool get hasConstraint => constraint != null;
+  bool get isVirtual => virtual != null;
 
-  Map<String, dynamic> export() {
-    final json = <String, dynamic>{
-      'name': name.toUpperCase(),
-      'castTo': castTo.type,
+  Object cast(String value) {
+    return switch (castTo) {
+      CastType.int => int.parse(value),
+      CastType.boolean => bool.parse(value),
+      CastType.double => double.parse(value),
+      CastType.string => value,
     };
-
-    if (constraint != null) {
-      json.putIfAbsent('constraint', () => constraint!.name);
-    }
-
-    if (summary != null) {
-      json.putIfAbsent('summary', () => summary);
-    }
-
-    return json;
   }
 }
 
-@immutable
-final class VirtualVariable {
-  final String name;
-  final String? exec;
+final class Virtual {
+  final String exec;
 
-  const VirtualVariable({required this.name, required this.exec});
+  Virtual({required this.exec});
 
-  Map<String, dynamic> export() {
-    final json = <String, dynamic>{
-      'name': name.toUpperCase(),
-      'exec': exec,
-    };
+  factory Virtual.from(dynamic params) {
+    final execField = params['exec'];
+    if (execField is String) {
+      return Virtual(exec: execField);
+    }
+    if (execField is Map) {
+      final platforms = ['macos', 'linux', 'windows'];
 
-    return json;
+      if (!platforms.contains(Platform.operatingSystem)) {
+        throw ArgumentError('virtual must be contains commands for $platforms');
+      }
+
+      return Virtual(exec: execField[Platform.operatingSystem]);
+    }
+    throw UnsupportedError('virtual must be string or map');
+  }
+
+  String performExec() {
+    final args = exec.split(' ');
+
+    final result = Process.runSync(
+      args.first,
+      args..removeAt(0),
+      runInShell: true,
+    );
+
+    return result.stdout.toString().trim();
   }
 }

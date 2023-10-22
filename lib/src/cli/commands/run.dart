@@ -85,16 +85,16 @@ class RunCommand {
       final name = key.toUpperCase();
 
       result.putIfAbsent(key, () {
-        final raw = env.getOrElse(key.toUpperCase(), () {
-          throw ArgumentError('Missing value for $name in config');
-        });
+        late final raw;
+        if (variable.isVirtual) {
+          raw = variable.virtual!.performExec();
+        } else {
+          raw = env.getOrElse(key.toUpperCase(), () {
+            throw ArgumentError('Missing value for $name in config');
+          });
+        }
 
-        final castedValue = switch (variable.castTo) {
-          CastType.int => int.parse(raw),
-          CastType.boolean => bool.parse(raw),
-          CastType.double => double.parse(raw),
-          CastType.string => raw,
-        };
+        final castedValue = variable.cast(raw);
 
         if (variable.hasConstraint) {
           var schema = <String, dynamic>{};
@@ -114,22 +114,22 @@ class RunCommand {
       });
     }
 
-    for (final virtualVar in config.virtual ?? <VirtualVariable>[]) {
-      if (virtualVar.exec != null) {
-        final exec = virtualVar.exec!.split(' ');
-
-        final process = Process.runSync(
-          exec.first,
-          exec..removeAt(0),
-          runInShell: true,
-        );
-
-        result.putIfAbsent(
-          virtualVar.name.toLowerCase(),
-          () => process.stdout.toString().trim(),
-        );
-      }
-    }
+    // for (final virtualVar in config.virtual ?? <VirtualVariable>[]) {
+    //   if (virtualVar.exec != null) {
+    //     final exec = virtualVar.exec!.split(' ');
+    //
+    //     final process = Process.runSync(
+    //       exec.first,
+    //       exec..removeAt(0),
+    //       runInShell: true,
+    //     );
+    //
+    //     result.putIfAbsent(
+    //       virtualVar.name.toLowerCase(),
+    //       () => process.stdout.toString().trim(),
+    //     );
+    //   }
+    // }
 
     return result;
   }

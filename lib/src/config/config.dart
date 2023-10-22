@@ -14,13 +14,11 @@ part 'variable.dart';
 @immutable
 final class Config {
   final List<Variable> variables;
-  final List<VirtualVariable>? virtual;
   final List<BaseTemplate> templates;
 
   Config({
     required this.variables,
     required this.templates,
-    this.virtual,
   });
 
   double get version => 1.0;
@@ -40,21 +38,7 @@ final class _ConfigImporter {
     return Config(
       variables: _variables,
       templates: _templates,
-      virtual: _virtual,
     );
-  }
-
-  List<VirtualVariable> get _virtual {
-    final virtual = <VirtualVariable>[];
-    for (final virtualVar in json['virtual'] ?? []) {
-      virtual.add(
-        VirtualVariable(
-          name: virtualVar['name'],
-          exec: virtualVar['exec'],
-        ),
-      );
-    }
-    return virtual;
   }
 
   List<BaseTemplate> get _templates {
@@ -85,7 +69,7 @@ final class _ConfigImporter {
   List<Variable> get _variables {
     final variables = <Variable>[];
 
-    for (final variable in json['variables']) {
+    for (final Map variable in json['variables']) {
       final castTo = variable['castTo'];
 
       final newCastTo = castTo != null
@@ -104,10 +88,17 @@ final class _ConfigImporter {
         );
       }
 
+      Virtual? newVirtual;
+
+      if (variable.containsKey('virtual')) {
+        newVirtual = Virtual.from(variable['virtual']);
+      }
+
       final importVar = Variable(
         name: variable['name'],
         castTo: newCastTo,
         constraint: newConstraint,
+        virtual: newVirtual,
       );
       variables.add(importVar);
     }

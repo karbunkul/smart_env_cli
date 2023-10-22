@@ -11,18 +11,24 @@ variables:
   - name: BASE_AUTH
     castTo: string
 
-virtual:
   - name: GIT_BRANCH
-    exec: git rev-parse --abbrev-ref HEAD
+    virtual:
+      exec: git rev-parse --abbrev-ref HEAD
+
   - name: PWD
-    exec: pwd
+    exec:
+      linux: pwd
+      macos: pwd
+      windows: cd
 
 templates:
-  - output: lib/config.dart
+  - output: dist/config.dart
     template: templates/config.tpl
-  - output: lib/config.json
+
+  - output: dist/config.json
     json:
       fields:
         - PORT
         - DEBUG_MODE
         - GIT_BRANCH
+        - PWD
