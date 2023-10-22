@@ -1,27 +1,13 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:logging/logging.dart';
 import 'package:smart_env/smart_env.dart';
 
-void main() {
-  final variables = <Variable>[
-    Variable(
-      name: 'port',
-      castTo: CastType.int,
-      constraint: CastConstraint(
-        name: 'port',
-        constraints: {'minimum': 80, 'maximum': 300},
-      ),
-    ),
-    Variable(name: 'debug_mode', castTo: CastType.boolean),
-    Variable(name: 'base_auth'),
-  ];
+void main(List<String> args) {
+  runZonedGuarded(() => SmartEnvRunner().run(args), (error, stack) {
+    final logger = Logger('smart_env')..severe(error, stack);
 
-  final templates = <FileTemplate>[
-    FileTemplate(output: 'lib/config.dart', template: 'config.tpl'),
-  ];
-
-  final config = Config(
-    variables: variables,
-    templates: templates,
-  );
-
-  config.generate();
+    exit(1);
+  });
 }

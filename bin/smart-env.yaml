@@ -1,0 +1,29 @@
+---
+version: 1
+
+variables:
+  - name: PORT
+    castTo: int
+    virtual:
+      exec: pwd
+
+  - name: DEBUG_MODE
+    castTo: boolean
+
+  - name: BASE_AUTH
+    castTo: string
+
+virtual:
+  - name: GIT_BRANCH
+    exec: git rev-parse --abbrev-ref HEAD
+  - name: PWD
+    exec: pwd
+
+templates:
+  - output: lib/config.dart
+    template: templates/config.tpl
+  - output: lib/config.json
+    json:
+      fields:
+        - PORT
+        - DEBUG_MODE

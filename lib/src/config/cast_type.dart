@@ -10,7 +10,7 @@ enum CastType {
 
   const CastType(this.type);
 
-  CastType import(String type) {
+  static CastType import(String type) {
     return CastType.values.firstWhere(
       (element) => element.type == type,
       orElse: () {
